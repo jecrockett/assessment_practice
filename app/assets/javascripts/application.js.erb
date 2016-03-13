@@ -1,0 +1,64 @@
+// This is a manifest file that'll be compiled into application.js, which will include all the files
+// listed below.
+//
+// Any JavaScript/Coffee file within this directory, lib/assets/javascripts, vendor/assets/javascripts,
+// or vendor/assets/javascripts of plugins, if any, can be referenced here using a relative path.
+//
+// It's not advisable to add code directly here, but if you do, it'll appear at the bottom of the
+// compiled file.
+//
+// Read Sprockets README (https://github.com/sstephenson/sprockets#sprockets-directives) for details
+// about supported directives.
+//
+//= require jquery
+//= require jquery_ujs
+//= require twitter/bootstrap
+//= require turbolinks
+//= require_tree .
+
+$(document).ready(function(){
+
+  $('.search-button').click(function(){
+    var search = $('.search-field').val()
+    $.ajax({
+      type: 'GET',
+      url: "https://api.bestbuy.com/v1/products(longDescription=" +
+      search +
+      "*)",
+      data: {
+        apiKey: "<%= ENV['BEST_BUY_KEY'] %>",
+        format: 'json',
+        pageSize: '15',
+        show: 'sku,name,customerReviewAverage,shortDescription,salePrice,image'
+      },
+      success: function(response) {
+        $('.search-results').empty();
+        $.each(response.products, function(index, product){
+          renderProduct(product);
+        })
+      },
+      error: function(xhr) {
+        console.log(xhr.responseText)
+      }
+    })
+  });
+
+  var renderProduct = function(product) {
+    $('.search-results').append(
+      "<div class='item'><p>" +
+      product.name +
+      "</p><p>" +
+      product.shortDescription +
+      "</p><img src=" +
+      product.image +
+      "><p>" +
+      product.salePrice +
+      "</p><p>" +
+      product.customerReviewAverage +
+      "</p><p>" +
+      product.sku +
+      "</p></div>"
+    );
+  }
+
+});
