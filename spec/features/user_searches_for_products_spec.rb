@@ -10,4 +10,14 @@ RSpec.describe "product search", js: true do
       expect(page).to have_css('.item', count: 15)
     end
   end
+
+  it "returns 3 products for sennheiser headphones white search" do
+    visit search_path
+    fill_in "search", with: "sennheiser headphones white"
+    click_on "Search"
+
+    within '.search-results' do
+      expect(page).to have_css('.item', count: 3)
+    end
+  end
 end
